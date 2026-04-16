@@ -31,7 +31,7 @@
       overflow-x: hidden;
     }
 
-    /* grain overlay */
+    /* grain */
     body::after {
       content: '';
       position: fixed; inset: 0;
@@ -64,6 +64,7 @@
     nav a:hover::after { width: 100%; }
 
     /* ── HERO ── */
+    /* Grade 8 photo is 3:4 portrait — hero visual matches that */
     .hero {
       min-height: 100vh;
       display: grid; grid-template-columns: 1fr 1fr;
@@ -84,9 +85,8 @@
 
     .eyebrow {
       display: inline-flex; align-items: center; gap: 0.8rem;
-      font-size: 0.72rem; font-weight: 500;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 1.6rem;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--gold); margin-bottom: 1.6rem;
       opacity: 0; animation: fadeUp 0.7s 0.15s ease forwards;
     }
     .eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
@@ -114,15 +114,15 @@
       background: var(--ink); color: var(--cream);
       font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em;
       text-transform: uppercase; text-decoration: none; border-radius: 2px;
-      position: relative; overflow: hidden; transition: color 0.3s;
+      position: relative; overflow: hidden;
     }
     .btn-dark::before {
       content: ''; position: absolute; inset: 0;
-      background: var(--rust); transform: translateX(-101%);
-      transition: transform 0.38s ease;
+      background: var(--rust); transform: translateX(-101%); transition: transform 0.38s ease;
     }
     .btn-dark:hover::before { transform: translateX(0); }
     .btn-dark span { position: relative; z-index: 1; }
+
     .btn-link {
       font-size: 0.82rem; font-weight: 500; color: var(--ink-soft);
       text-decoration: none; border-bottom: 1px solid var(--gold);
@@ -130,17 +130,26 @@
     }
     .btn-link:hover { color: var(--rust); }
 
+    /* Hero visual — portrait 3:4 ratio for grade8.jpg */
     .hero-visual {
-      position: relative; height: 72vh; min-height: 440px;
+      position: relative;
       opacity: 0; animation: fadeIn 1s 0.5s ease forwards;
     }
-    .hero-img {
-      width: 100%; height: 100%; object-fit: cover;
-      border-radius: 3px; filter: saturate(0.82) contrast(1.06); display: block;
+    .hero-photo-frame {
+      /* 3:4 aspect ratio (grade8 is 960×1280) */
+      aspect-ratio: 3 / 4;
+      max-height: 78vh;
+      border-radius: 3px;
+      overflow: hidden;
+      background: var(--paper);
     }
-    .hero-img-overlay {
-      position: absolute; inset: 0; border-radius: 3px;
-      background: linear-gradient(to bottom, transparent 55%, rgba(28,24,16,0.38));
+    .hero-photo-frame img {
+      width: 100%; height: 100%;
+      object-fit: contain;        /* show full photo, no crop */
+      object-position: center;
+      display: block;
+      filter: saturate(0.88) contrast(1.04);
+      background: var(--paper);
     }
     .hero-pill {
       position: absolute; bottom: -1.4rem; left: -1.4rem;
@@ -185,21 +194,16 @@
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 6rem; align-items: start; margin-top: 1rem;
     }
-    .q-intro p {
-      margin-top: 1.5rem; font-size: 1.02rem;
-      color: var(--ink-soft); line-height: 1.88; max-width: 430px;
-    }
+    .q-intro p { margin-top: 1.5rem; font-size: 1.02rem; color: var(--ink-soft); line-height: 1.88; max-width: 430px; }
     .q-cards { display: flex; flex-direction: column; gap: 1.4rem; }
     .q-card {
-      background: white;
-      border: 1px solid rgba(200,169,110,0.18);
+      background: white; border: 1px solid rgba(200,169,110,0.18);
       border-left: 3px solid var(--gold);
       padding: 1.9rem 2.1rem; border-radius: 0 3px 3px 0;
       transition: all 0.32s ease; position: relative; overflow: hidden;
     }
     .q-card::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 0; height: 100%;
+      content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%;
       background: linear-gradient(to right, rgba(200,169,110,0.055), transparent);
       transition: width 0.38s ease;
     }
@@ -218,10 +222,12 @@
     }
     .hobbies-top p { font-size: 1.02rem; color: var(--ink-soft); line-height: 1.88; }
 
+    /* Three-column hobby grid — each card shows its photo at natural ratio */
     .hobbies-grid {
       display: grid;
-      grid-template-columns: 1.25fr 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.6rem;
+      align-items: start; /* cards can be different heights — that's fine */
     }
 
     .h-card {
@@ -229,15 +235,34 @@
       box-shadow: 0 3px 22px rgba(28,24,16,0.08);
       transition: transform 0.38s ease, box-shadow 0.38s ease;
     }
-    .h-card:hover { transform: translateY(-7px); box-shadow: 0 18px 42px rgba(28,24,16,0.15); }
+    .h-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(28,24,16,0.14); }
 
-    .h-img-wrap { overflow: hidden; }
-    .h-img {
-      width: 100%; height: 270px; object-fit: cover; display: block;
-      filter: saturate(0.82) contrast(1.06);
-      transition: transform 0.5s ease, filter 0.4s ease;
+    /* Natural-ratio photo wrapper: padding-top trick locks aspect ratio */
+    .h-img-wrap {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: var(--paper);
     }
-    .h-card:hover .h-img { transform: scale(1.04); filter: saturate(1) contrast(1.06); }
+    /* MMA team & web-dev are 4:3 landscape → padding-top 75% */
+    .ratio-4-3 { padding-top: 75%; }
+    /* Lando selfie is 2:3 portrait → padding-top 150% */
+    .ratio-2-3 { padding-top: 150%; }
+
+    .h-img-wrap img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: contain;   /* show full image, no crop */
+      object-position: center;
+      display: block;
+      filter: saturate(0.82) contrast(1.05);
+      transition: filter 0.4s ease, transform 0.5s ease;
+    }
+    .h-card:hover .h-img-wrap img {
+      filter: saturate(1) contrast(1.05);
+      transform: scale(1.02);
+    }
 
     .h-chip {
       display: inline-block; margin: 1.4rem 1.7rem 0;
@@ -247,7 +272,7 @@
     }
     .h-body { padding: 0.85rem 1.7rem 1.9rem; }
     .h-caption { font-size: 0.76rem; font-style: italic; color: var(--gold); margin-bottom: 0.35rem; display: block; }
-    .h-body h3 { font-family: 'Playfair Display', serif; font-size: 1.22rem; font-weight: 700; color: var(--ink); margin-bottom: 0.7rem; line-height: 1.2; }
+    .h-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--ink); margin-bottom: 0.65rem; line-height: 1.2; }
     .h-body p { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.8; }
 
     /* ── SKILLS ── */
@@ -258,7 +283,6 @@
       gap: 6rem; align-items: start; margin-top: 2.5rem;
     }
     .skills-intro p { font-size: 1rem; color: var(--ink-soft); line-height: 1.88; margin-top: 1.5rem; }
-
     .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
 
     .sk-card {
@@ -267,8 +291,7 @@
       transition: all 0.32s ease; position: relative; overflow: hidden;
     }
     .sk-card::after {
-      content: ''; position: absolute; bottom: 0; left: 0;
-      width: 100%; height: 2px;
+      content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
       background: linear-gradient(to right, var(--gold), var(--rust));
       transform: scaleX(0); transform-origin: left; transition: transform 0.38s ease;
     }
@@ -286,7 +309,6 @@
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 5rem; margin-top: 3.5rem; align-items: start;
     }
-
     .why-cards { display: flex; flex-direction: column; gap: 1.3rem; }
     .w-card {
       padding: 1.7rem 2rem;
@@ -297,66 +319,92 @@
     .w-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--gold); margin-bottom: 0.65rem; }
     .w-card p { font-size: 0.91rem; line-height: 1.8; color: rgba(250,247,242,0.68); }
 
-    /* ── PERSONAL PHOTOS STRIP ── */
-    .photos-strip {
-      background: #111008;
-      padding: 70px 6%;
+    .why-stats { display: flex; flex-direction: column; gap: 1.5rem; justify-content: center; }
+
+    .stat-box {
+      padding: 2.2rem 2.4rem;
+      border: 1px solid rgba(200,169,110,0.2);
+      border-radius: 3px;
     }
-    .photos-strip-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-    }
-    .photos-strip-label {
+    .stat-box.tinted { background: rgba(200,169,110,0.05); }
+
+    .stat-row { display: flex; gap: 2rem; align-items: center; }
+    .stat-divider { width: 1px; height: 40px; background: rgba(200,169,110,0.15); flex-shrink: 0; }
+    .stat-item {}
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+    .stat-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(250,247,242,0.35); margin-top: 0.3rem; }
+
+    .cohort-year { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 0.4rem; }
+    .cohort-label { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250,247,242,0.3); }
+
+    .pull-quote { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; color: rgba(250,247,242,0.82); line-height: 1.55; margin-bottom: 1rem; }
+    .pull-attr { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+
+    /* ── PERSONAL PHOTOS ── */
+    .photos-strip { background: #111008; padding: 80px 6%; }
+    .photos-strip-inner { max-width: 1280px; margin: 0 auto; }
+
+    .photos-label {
       display: inline-flex; align-items: center; gap: 0.7rem;
       font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--gold); margin-bottom: 2.5rem;
     }
-    .photos-strip-label::before { content: ''; display: block; width: 22px; height: 1px; background: var(--gold); }
+    .photos-label::before { content: ''; display: block; width: 22px; height: 1px; background: var(--gold); }
 
+    /*
+      Photo ratios:
+        grandparents.jpg  4:3  landscape  → ratio-4-3  (padding-top 75%)
+        grade8.jpg        3:4  portrait   → ratio-3-4  (padding-top 133.3%)
+      Layout: side by side, each in its own card
+    */
     .photos-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.2rem;
+      gap: 1.4rem;
+      align-items: start;
     }
 
     .p-card {
-      position: relative; overflow: hidden; border-radius: 3px;
+      border-radius: 3px; overflow: hidden;
       background: #1a1710;
+      position: relative;
     }
-    .p-card img {
-      width: 100%; display: block;
-      object-fit: cover;
-      filter: saturate(0.75) brightness(0.88);
-      transition: transform 0.5s ease, filter 0.4s ease;
-    }
-    .p-card:hover img { transform: scale(1.04); filter: saturate(1) brightness(0.95); }
 
-    .p-card .p-caption {
+    /* Natural-ratio wrapper for bottom photos */
+    .p-img-wrap {
+      position: relative;
+      width: 100%;
+    }
+    .ratio-4-3-p  { padding-top: 75%; }
+    .ratio-3-4-p  { padding-top: 133.3%; }
+
+    .p-img-wrap img {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      padding: 2.5rem 1.6rem 1.4rem;
-      background: linear-gradient(to top, rgba(15,12,6,0.85) 0%, transparent 100%);
-      font-size: 0.82rem;
-      font-style: italic;
-      color: rgba(250,247,242,0.8);
-      transition: opacity 0.3s;
-    }
-    .p-card .p-caption strong {
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: contain;
+      object-position: center;
       display: block;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.72rem;
-      font-style: normal;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 0.25rem;
+      filter: saturate(0.75) brightness(0.88);
+      transition: filter 0.4s ease, transform 0.5s ease;
     }
+    .p-card:hover .p-img-wrap img { filter: saturate(1) brightness(0.95); transform: scale(1.02); }
 
-    /* tall card spans 2 rows */
-    .p-card.tall { grid-row: span 2; }
-    .p-card.tall img { height: 100%; min-height: 500px; }
-    .p-card:not(.tall) img { height: 280px; }
+    .p-caption-bar {
+      padding: 1.2rem 1.6rem;
+      background: #1a1710;
+      border-top: 1px solid rgba(200,169,110,0.1);
+    }
+    .p-caption-bar strong {
+      display: block;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.25rem;
+    }
+    .p-caption-bar span {
+      font-size: 0.82rem; font-style: italic;
+      color: rgba(250,247,242,0.55);
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -395,14 +443,12 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 960px) {
       .hero { grid-template-columns: 1fr; padding-top: 7rem; }
-      .hero-visual { height: 52vw; min-height: 260px; }
       .hero::before { display: none; }
+      .hero-photo-frame { max-height: 60vw; aspect-ratio: 3/4; }
       .qualities-grid, .why-layout, .skills-layout, .hobbies-top { grid-template-columns: 1fr; gap: 2.5rem; }
       .hobbies-grid { grid-template-columns: 1fr; }
       .skills-grid { grid-template-columns: 1fr; }
       .photos-grid { grid-template-columns: 1fr; }
-      .p-card.tall { grid-row: span 1; }
-      .p-card.tall img { min-height: 300px; }
       footer { flex-direction: column; gap: 1rem; text-align: center; }
       .foot-info { text-align: center; }
     }
@@ -433,9 +479,10 @@
     </div>
 
     <div class="hero-visual">
-      <!-- Nicholas in school uniform — personal photo -->
-      <img class="hero-img" src="grade8.jpg" alt="Nicholas Turck">
-      <div class="hero-img-overlay"></div>
+      <!-- grade8.jpg is 960×1280 (3:4 portrait) — shown fully, no crop -->
+      <div class="hero-photo-frame">
+        <img src="grade8.jpg" alt="Nicholas Turck — first day of Grade 8">
+      </div>
       <div class="hero-pill">
         <div class="num">14</div>
         <div class="lbl">Years old · Cape Town</div>
@@ -488,13 +535,10 @@
 
       <div class="hobbies-grid stagger">
 
-        <!-- MMA — personal team photo -->
+        <!-- MMA: 1600×1200 → 4:3 landscape -->
         <div class="h-card">
-          <div class="h-img-wrap">
-            <img class="h-img"
-              src="mma-team.jpg"
-              alt="Nicholas with his MMA team at Pride Fighting Academy"
-              onerror="this.src='https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&q=80&fit=crop'">
+          <div class="h-img-wrap ratio-4-3">
+            <img src="mma-team.jpg" alt="Nicholas with his MMA team at Pride Fighting Academy">
           </div>
           <span class="h-chip">Discipline · Resilience</span>
           <div class="h-body">
@@ -504,13 +548,10 @@
           </div>
         </div>
 
-        <!-- Web Dev — baby-at-computer personal photo -->
+        <!-- Web Dev: 1280×960 → 4:3 landscape -->
         <div class="h-card">
-          <div class="h-img-wrap">
-            <img class="h-img"
-              src="web-dev.jpg"
-              alt="Always been good with computers"
-              style="object-position: center top;">
+          <div class="h-img-wrap ratio-4-3">
+            <img src="web-dev.jpg" alt="Always been good with computers">
           </div>
           <span class="h-chip">Initiative · Real-World</span>
           <div class="h-body">
@@ -520,13 +561,10 @@
           </div>
         </div>
 
-        <!-- AI — Nicholas meeting Lando Norris via AI -->
+        <!-- AI / Lando: 1024×1536 → 2:3 portrait -->
         <div class="h-card">
-          <div class="h-img-wrap">
-            <img class="h-img"
-              src="ai-lando.jpg"
-              alt="Nicholas with Lando Norris"
-              style="object-position: center top;">
+          <div class="h-img-wrap ratio-2-3">
+            <img src="ai-lando.jpg" alt="Nicholas with Lando Norris">
           </div>
           <span class="h-chip">Curiosity · Innovation</span>
           <div class="h-body">
@@ -604,31 +642,30 @@
           </div>
         </div>
 
-        <!-- Right column: stacked why cards visual filler with dark aesthetic text -->
-        <div class="reveal" style="display:flex; flex-direction:column; gap:1.5rem; justify-content:center;">
-          <div style="padding:2.5rem; border:1px solid rgba(200,169,110,0.2); border-radius:3px;">
-            <div style="font-family:'Playfair Display',serif; font-size:3.5rem; font-weight:900; color:var(--gold); line-height:1; margin-bottom:0.5rem;">2026</div>
-            <div style="font-size:0.75rem; font-weight:500; letter-spacing:0.14em; text-transform:uppercase; color:rgba(250,247,242,0.35);">Big Ideas Cohort</div>
+        <div class="why-stats reveal">
+          <div class="stat-box">
+            <div class="cohort-year">2026</div>
+            <div class="cohort-label">Big Ideas Cohort</div>
           </div>
-          <div style="padding:2.5rem; border:1px solid rgba(200,169,110,0.2); border-radius:3px; background:rgba(200,169,110,0.05);">
-            <div style="font-family:'Playfair Display',serif; font-style:italic; font-size:1.3rem; color:rgba(250,247,242,0.8); line-height:1.5; margin-bottom:1rem;">"I'm excited to bring my discipline, curiosity, and genuine drive to Big Ideas — and to be part of something that actually matters."</div>
-            <div style="font-size:0.72rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--gold);">— Nicholas Turck</div>
+          <div class="stat-box tinted">
+            <div class="pull-quote">"I'm excited to bring my discipline, curiosity, and genuine drive to Big Ideas — and to be part of something that actually matters."</div>
+            <div class="pull-attr">— Nicholas Turck</div>
           </div>
-          <div style="padding:2.5rem; border:1px solid rgba(200,169,110,0.2); border-radius:3px;">
-            <div style="display:flex; gap:2rem;">
-              <div>
-                <div style="font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; color:var(--gold); line-height:1;">5+</div>
-                <div style="font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(250,247,242,0.35); margin-top:0.3rem;">Days training/week</div>
+          <div class="stat-box">
+            <div class="stat-row">
+              <div class="stat-item">
+                <div class="stat-num">5+</div>
+                <div class="stat-label">Training days/week</div>
               </div>
-              <div style="width:1px; background:rgba(200,169,110,0.15);"></div>
-              <div>
-                <div style="font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; color:var(--gold); line-height:1;">9</div>
-                <div style="font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(250,247,242,0.35); margin-top:0.3rem;">Grade</div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">9</div>
+                <div class="stat-label">Grade</div>
               </div>
-              <div style="width:1px; background:rgba(200,169,110,0.15);"></div>
-              <div>
-                <div style="font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; color:var(--gold); line-height:1;">14</div>
-                <div style="font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(250,247,242,0.35); margin-top:0.3rem;">Years old</div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="stat-num">14</div>
+                <div class="stat-label">Years old</div>
               </div>
             </div>
           </div>
@@ -640,34 +677,29 @@
   <!-- ═══ PERSONAL PHOTOS ═══ -->
   <section class="photos-strip">
     <div class="photos-strip-inner">
-      <div class="photos-strip-label reveal">A Glimpse of My Life</div>
+      <div class="photos-label reveal">A Glimpse of My Life</div>
 
       <div class="photos-grid reveal">
 
-        <!-- Tall left: grandparents dinner -->
-        <div class="p-card tall">
-          <img src="grandparents.jpg" alt="Dinner with grandparents and cousin" style="object-position: center;">
-          <div class="p-caption">
+        <!-- grandparents.jpg: 1280×960 → 4:3 landscape -->
+        <div class="p-card">
+          <div class="p-img-wrap ratio-4-3-p">
+            <img src="grandparents.jpg" alt="Dinner with grandparents and cousin">
+          </div>
+          <div class="p-caption-bar">
             <strong>Family</strong>
-            Me with my grandparents and cousin at dinner
+            <span>Me with my grandparents and cousin at dinner</span>
           </div>
         </div>
 
-        <!-- Right column: grade 8 photo stacked -->
-        <div style="display:flex; flex-direction:column; gap:1.2rem;">
-          <div class="p-card">
-            <img src="grade8.jpg" alt="First day of Grade 8" style="height:280px; object-fit:cover; object-position:center top;">
-            <div class="p-caption">
-              <strong>September 2024</strong>
-              My first day in Grade 8
-            </div>
+        <!-- grade8.jpg: 960×1280 → 3:4 portrait -->
+        <div class="p-card">
+          <div class="p-img-wrap ratio-3-4-p">
+            <img src="grade8.jpg" alt="First day of Grade 8">
           </div>
-
-          <!-- Dark stat card -->
-          <div style="background:#1a1710; border-radius:3px; padding:2rem 2.2rem; border:1px solid rgba(200,169,110,0.12); display:flex; flex-direction:column; justify-content:center; gap:0.6rem;">
-            <div style="font-size:0.68rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold);">Cape Town, South Africa</div>
-            <div style="font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; color:var(--cream); line-height:1.2;">Grade 9 · Big Ideas<br>Applicant · 2026</div>
-            <div style="font-size:0.85rem; color:rgba(250,247,242,0.4); margin-top:0.4rem; line-height:1.7;">MMA athlete · Web developer<br>AI explorer · Cape Town</div>
+          <div class="p-caption-bar">
+            <strong>September 2024</strong>
+            <span>My first day in Grade 8</span>
           </div>
         </div>
 
